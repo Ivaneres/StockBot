@@ -1,4 +1,4 @@
-from api_parser import *
+from api_parser import JsonSelector, APIParser
 
 # selectors = [JsonSelector(("searchedProducts", "productDetails", "displayName"),
 #                          ("searchedProducts", "productDetails", "prdStatus")),

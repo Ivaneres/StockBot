@@ -1,4 +1,4 @@
-from nvidia import *
+from nvidia import NvidiaParser 
 
 parsers = [NvidiaParser()]
 all_products = []

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Callable, List, Dict, Tuple, Optional
 import requests
 import json
-from product import *
+from product import Product
 
 class JsonSelector(object):
     """
@@ -48,7 +48,7 @@ class APIParser(ABC):
             for key in selector.prod_path:
                 search_data = search_data[key]
                 
-            if type(search_data) is not dict:
+            if not isinstance(search_data, dict):
                 for product_dict in search_data:
                     self.product_list.append(Product(product_dict, selector, "JSON", "NVIDIA"))
             
