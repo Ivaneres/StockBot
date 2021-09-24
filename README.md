@@ -26,6 +26,8 @@ Python 3.9 and pip are required.
 Clone the repo, then run
 ```
 cd StockBot
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
