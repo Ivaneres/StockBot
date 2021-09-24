@@ -1,38 +1,59 @@
-from typing import Callable, List, Dict
+from typing import List
 import requests
+from utils import lookup
 
 
 class JSONSelector:
+    """
+    prod_path: path to find product entries from json data
+    name_path: path to find product name from product entry
+    stock_status_path: path to find product stock status from product entry
+    stock_status_message: stock_status_path value when the item is in stock. Optional - if not stock_status_path is not
+        found, the item is assumed out of stock
+    price_path: path to find product price from product entry
+    """
 
-    def __init__(self, selection_path: List[str]):
-        self.selection_path = selection_path
+    def __init__(
+            self,
+            prod_path: List[str],
+            name_path: List[str],
+            stock_status_path: List[str],
+            stock_status_message: str = None,
+            price_path: List[str] = None):
+        self.prod_path = prod_path
+        self.name_path = name_path
+        self.status_path = stock_status_path
+        self.stock_status_message = stock_status_message
+        self.price_path = price_path
 
-    def select(self, data: Dict):
-        for key in self.selection_path:
-            if isinstance(data, list) and not isinstance(key, int):
-                raise RuntimeError("Attempted to index list with a non-int type.")
-            if isinstance(data, list) and key >= len(data):
-                raise RuntimeError("Index greater than list length")
-            elif isinstance(data, dict) and data.get(key) is None:
-                raise RuntimeError(f"Could not find key {key} in dict")
-            data = data[key]
-        return data
+    def parse_data(self, data):
+        products_data = lookup(data, self.prod_path)
+        if isinstance(products_data, dict):
+            # Forces products_data to always be a list, in case prod_path returns a singular item
+            products_data = [products_data]
+        return [{
+            "name": lookup(product, self.name_path),
+            "status": lookup(product, self.status_path) == self.stock_status_message,
+            "price": lookup(product, self.price_path) if self.price_path is not None else None
+        } for product in products_data]
+
 
 class APIParser:
 
-    def __init__(self, selectors: List[JSONSelector], headers=None, postprocess: Callable = lambda x: x):
+    def __init__(
+            self,
+            selectors: List[JSONSelector],
+            request_url: str,
+            headers=None):
         if headers is None:
             headers = {}
         self.headers = headers
         self.selectors = selectors
-        self.__postprocess = postprocess
+        self.request_url = request_url
 
-    def fetch(self, url: str, request_type: str, data: Dict[str, str]) -> List[str]:
-        if request_type not in ["GET", "POST"]:
-            raise ValueError(f"{request_type} is not a valid request type")
-        if request_type == "GET":
-            r = requests.get(url, data, headers=self.headers)
-        else:
-            r = requests.post(url, json=data, headers=self.headers)
-        data = r.json()
-        return self.__postprocess([x.select(data) for x in self.selectors])
+    def run(self):
+        r = requests.get(url=self.request_url, headers=self.headers)
+        if r.status_code != 200:
+            raise ConnectionError(f"API returned non-200 code {r.status_code}")
+        json_data = r.json()
+        return [selector.parse_data(json_data) for selector in self.selectors]
