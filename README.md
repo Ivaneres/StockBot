@@ -1,5 +1,7 @@
 # StockBot
 
+![example workflow](https://github.com/Ivaneres/StockBot/actions/workflows/python-app.yml/badge.svg)
+
 Developed with [Can Narin](https://github.com/cannarin025).
 
 StockBot is a stock monitor tool with Discord integration, used to monitor stock of graphics cards in the ongoing shortage.
