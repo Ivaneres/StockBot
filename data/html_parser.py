@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import yaml
 
+from data.monitor import StockMonitor, Product
+
 
 class HTMLSelector:
     """
@@ -27,7 +29,7 @@ class HTMLSelector:
         self.stock_status_message = stock_status_message
         self.price_path = price_path
 
-    def parse_data(self, data):
+    def parse_data(self, data) -> List[Product]:
         products = data
         for path in self.prod_path[:-1]:
             products = products.find(class_=path)
@@ -38,16 +40,16 @@ class HTMLSelector:
             name = product.find(class_=self.name_path).get_text().strip()
             status = product.find(class_=self.status_path)
             price = product.find(class_=self.price_path)
-            result.append({
-                "name": name,
-                "status": self.stock_status_message.lower() in status.get_text().strip().lower() if status is not None else False,
-                "price": price.get_text().strip() if price is not None else None
-            })
+            result.append(Product(
+                name=name,
+                in_stock=self.stock_status_message.lower() in status.get_text().strip().lower() if status is not None else False,
+                price=price.get_text().strip() if price is not None else None)
+            )
 
         return result
 
 
-class HTMLParser:
+class HTMLParser(StockMonitor):
 
     def __init__(
             self,
@@ -60,7 +62,7 @@ class HTMLParser:
         self.selectors = selectors
         self.request_url = request_url
 
-    def run(self):
+    def run(self) -> List[Product]:
         r = requests.get(url=self.request_url, headers=self.headers)
         if r.status_code != 200:
             raise ConnectionError(f"API returned non-200 code {r.status_code}")

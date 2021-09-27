@@ -60,11 +60,12 @@ class NvidiaTest(unittest.TestCase):
             data = json.load(fp)
         parsed_0 = nvidia_parser.selectors[0].parse_data(data)
         self.assertEqual(len(parsed_0), 2)
-        self.assertEqual(parsed_0[0], {"name": "NVIDIA RTX 3090", "status": False, "price": "£1,399.00"})
-        self.assertEqual(parsed_0[1], {"name": "NVIDIA RTX 3070", "status": False, "price": "£469.00"})
+        self.assertEqual(parsed_0[0].name, "NVIDIA RTX 3090")
+        self.assertEqual(parsed_0[0].in_stock, False)
+        self.assertEqual(parsed_0[1].price, "£469.00")
         parsed_1 = nvidia_parser.selectors[1].parse_data(data)
         self.assertEqual(len(parsed_1), 1)
-        self.assertEqual(parsed_1[0], {"name": "NVIDIA RTX 3080", "status": False, "price": "£649.00"})
+        self.assertEqual(parsed_1[0].name, "NVIDIA RTX 3080")
 
 
 if __name__ == "__main__":

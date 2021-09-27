@@ -2,6 +2,7 @@ from typing import List, Dict
 import requests
 import yaml
 
+from data.monitor import StockMonitor, Product
 from utils import lookup
 
 
@@ -28,19 +29,19 @@ class JSONSelector:
         self.stock_status_message = stock_status_message
         self.price_path = price_path
 
-    def parse_data(self, data):
+    def parse_data(self, data) -> List[Product]:
         products_data = lookup(data, self.prod_path)
         if isinstance(products_data, dict):
             # Forces products_data to always be a list, in case prod_path returns a singular item
             products_data = [products_data]
-        return [{
-            "name": lookup(product, self.name_path),
-            "status": lookup(product, self.status_path) == self.stock_status_message,
-            "price": lookup(product, self.price_path) if self.price_path is not None else None
-        } for product in products_data]
+        return [Product(
+            name=lookup(product, self.name_path),
+            in_stock=lookup(product, self.status_path) == self.stock_status_message,
+            price=lookup(product, self.price_path) if self.price_path is not None else None
+        ) for product in products_data]
 
 
-class APIParser:
+class APIParser(StockMonitor):
 
     def __init__(
             self,
@@ -59,7 +60,7 @@ class APIParser:
             raise ConnectionError(f"API returned non-200 code {r.status_code}")
         return r.json()
 
-    def run(self):
+    def run(self) -> List[Product]:
         json_data = self.get_api_data()
         return [x for selector in self.selectors for x in selector.parse_data(json_data)]
 

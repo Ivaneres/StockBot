@@ -10,16 +10,10 @@ class Product:
     source: string indicating source of product e.g. "NVIDIA", "Scan"
     """
 
-    def __init__(self, raw, selector, listing_type: str, source: str, name: str, in_stock: bool, price: int,
-                 buy_link: str):
-        self.raw = raw
-        self.selector = selector
-        self.listing_type = listing_type
-        self.source = source
+    def __init__(self, name: str, in_stock: bool, price: int):
         self.name = name
         self.in_stock = in_stock
         self.price = price
-        self.buy_link = buy_link
 
 
 class StockMonitor(ABC):
