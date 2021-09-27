@@ -1,5 +1,7 @@
-from typing import List
+from typing import List, Dict
 import requests
+import yaml
+
 from utils import lookup
 
 
@@ -51,9 +53,31 @@ class APIParser:
         self.selectors = selectors
         self.request_url = request_url
 
-    def run(self):
+    def get_api_data(self) -> Dict:
         r = requests.get(url=self.request_url, headers=self.headers)
         if r.status_code != 200:
             raise ConnectionError(f"API returned non-200 code {r.status_code}")
-        json_data = r.json()
+        return r.json()
+
+    def run(self):
+        json_data = self.get_api_data()
         return [selector.parse_data(json_data) for selector in self.selectors]
+
+    @classmethod
+    def from_yaml(cls, path: str):
+        with open(path, "r") as fp:
+            data = yaml.safe_load(fp.read())
+        selectors = [
+            JSONSelector(
+                prod_path=x["products_path"],
+                name_path=x["name_path"],
+                stock_status_path=x["status_path"],
+                stock_status_message=x["stock_message"],
+                price_path=x.get("price_path")
+            ) for x in data["selectors"]
+        ]
+        return cls(
+            request_url=data["url"],
+            headers=data.get("headers"),
+            selectors=selectors
+        )
