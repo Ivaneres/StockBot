@@ -61,7 +61,7 @@ class APIParser:
 
     def run(self):
         json_data = self.get_api_data()
-        return [selector.parse_data(json_data) for selector in self.selectors]
+        return [x for selector in self.selectors for x in selector.parse_data(json_data)]
 
     @classmethod
     def from_yaml(cls, path: str):
