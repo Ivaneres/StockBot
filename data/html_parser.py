@@ -2,7 +2,6 @@ from typing import List
 import requests
 from bs4 import BeautifulSoup
 import yaml
-import itertools
 
 
 class HTMLSelector:
@@ -67,7 +66,7 @@ class HTMLParser:
             raise ConnectionError(f"API returned non-200 code {r.status_code}")
         html_data = r.content
         soup = BeautifulSoup(html_data, "lxml")
-        return list(itertools.chain.from_iterable([selector.parse_data(soup) for selector in self.selectors]))
+        return [x for selector in self.selectors for x in selector.parse_data(soup)]
 
     @classmethod
     def from_yaml(cls, path: str):
