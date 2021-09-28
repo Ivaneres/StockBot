@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import data
 from data.api_parser import APIParser
+from data.webmonitor import WebMonitor
 
 
 class NvidiaTest(unittest.TestCase):
@@ -55,7 +56,7 @@ class NvidiaTest(unittest.TestCase):
         self.assertTrue("testing" in json_selector_1.parse_data.call_args[0][0].keys())
 
     def test_json_selector(self):
-        nvidia_parser = APIParser.from_yaml("./sources/nvidia.yml")
+        nvidia_parser = WebMonitor.from_yaml("./sources/nvidia.yml")
         with open("./test/sources/test_nvidia_data.json", "r") as fp:
             data = json.load(fp)
         parsed_0 = nvidia_parser.selectors[0].parse_data(data)
