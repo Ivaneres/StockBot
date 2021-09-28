@@ -33,7 +33,8 @@ class WebMonitor(StockMonitor):
             raise ConnectionError(f"API returned non-200 code {r.status_code}")
         if self.data_type == "api":
             return r.json()
-        return BeautifulSoup(r.content, "lxml")
+        else:
+            return BeautifulSoup(r.content, "lxml")
 
     def run(self) -> List[Product]:
         data = self.get_data()
@@ -43,16 +44,26 @@ class WebMonitor(StockMonitor):
     def from_yaml(cls, path: str):
         with open(path, "r") as fp:
             data = yaml.safe_load(fp.read())
-        selector_cls = JSONSelector if data["type"] == "api" else HTMLSelector
-        selectors = [
-            selector_cls(
-                prod_path=x["products_path"],
-                name_path=x["name_path"],
-                stock_status_path=x["status_path"],
-                stock_status_message=x["stock_message"],
-                price_path=x.get("price_path")
-            ) for x in data["selectors"]
-        ]
+        selectors = []
+        for selector_data in data["selectors"]:
+            if data["type"] == "api":
+                selector = JSONSelector(
+                    prod_path=selector_data["products_path"],
+                    name_path=selector_data["name_path"],
+                    stock_status_path=selector_data["status_path"],
+                    stock_status_message=selector_data["stock_message"],
+                    price_path=selector_data.get("price_path")
+                )
+            else:
+                selector = HTMLSelector(
+                    prod_path=selector_data["products_path"],
+                    name_path=selector_data["name_path"],
+                    stock_status_path=selector_data["status_path"],
+                    stock_status_message=selector_data["stock_message"],
+                    price_path=selector_data.get("price_path"),
+                    remove_classes=selector_data.get("remove_classes")
+                )
+            selectors.append(selector)
         return cls(
             data_type=data["type"],
             request_url=data["url"],

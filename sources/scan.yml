@@ -9,3 +9,5 @@ selectors:
     status_path: "in stock"
     stock_message: "In stock"
     price_path: "price"
+    remove_classes:
+      - "relatedProducts"
