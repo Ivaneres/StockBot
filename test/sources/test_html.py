@@ -23,8 +23,8 @@ class ScanTest(unittest.TestCase):
         with open("./test/sources/test_html_data.html") as fp:
             soup = BeautifulSoup(fp, "lxml")
         data = html_parser.selectors[0].parse_data(soup)
-        test_product = data[3]
-        self.assertEqual(len(data), 264)
+        test_product = data[1]
+        self.assertEqual(len(data), 3)
         self.assertEqual(test_product.name,
                          'ZOTAC NVIDIA GeForce RTX 3090 AMP Extreme Holo 24GB GDDR6X Ray-Tracing Graphics Card, 10496 Core, 1815MHz Boost')
         self.assertEqual(test_product.in_stock, True)
