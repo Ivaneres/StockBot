@@ -17,8 +17,8 @@ class ScanTest(unittest.TestCase):
         self.assertEqual(html_parser.selectors[0].price_path, "price")
 
     def test_HTML_selector(self):
-        nvidia_parser = HTMLParser.from_yaml("./test/sources/scan_test.yml")
-        data = nvidia_parser.run()
+        html_parser = HTMLParser.from_yaml("./test/sources/scan_test.yml")
+        data = html_parser.run()
         test_product = data[15]
         self.assertEqual(len(data), 264)
         self.assertEqual(test_product.name,
