@@ -22,14 +22,22 @@ class HTMLSelector:
             name_path: List[str],
             stock_status_path: List[str],
             stock_status_message: str = None,
-            price_path: List[str] = None):
+            price_path: List[str] = None,
+            remove_classes=None):
+        if remove_classes is None:
+            remove_classes = []
         self.prod_path = prod_path
         self.name_path = name_path
         self.status_path = stock_status_path
         self.stock_status_message = stock_status_message
         self.price_path = price_path
+        self.remove_classes = remove_classes
 
     def parse_data(self, data) -> List[Product]:
+        for cls in self.remove_classes:
+            for tag in data.find_all(class_=cls):
+                tag.decompose()
+
         products = data
         for path in self.prod_path[:-1]:
             products = products.find(class_=path)
