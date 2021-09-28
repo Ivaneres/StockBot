@@ -28,7 +28,7 @@ class ScanTest(unittest.TestCase):
         self.assertEqual(test_product.name,
                          'ZOTAC NVIDIA GeForce RTX 3090 AMP Extreme Holo 24GB GDDR6X Ray-Tracing Graphics Card, 10496 Core, 1815MHz Boost')
         self.assertEqual(test_product.in_stock, True)
-        self.assertEqual(test_product.price, 'Â£2,299.99')
+        self.assertEqual(test_product.price, '£2,299.99')
 
 
 if __name__ == "__main__":
