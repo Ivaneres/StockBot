@@ -1,4 +1,6 @@
 import unittest
+from bs4 import BeautifulSoup
+import lxml
 from data.html_parser import HTMLParser
 
 
@@ -18,13 +20,15 @@ class ScanTest(unittest.TestCase):
 
     def test_HTML_selector(self):
         html_parser = HTMLParser.from_yaml("./test/sources/scan_test.yml")
-        data = html_parser.run()
-        test_product = data[15]
+        with open("./test/sources/test_html_data.html") as fp:
+            soup = BeautifulSoup(fp, "lxml")
+        data = html_parser.selectors[0].parse_data(soup)
+        test_product = data[3]
         self.assertEqual(len(data), 264)
         self.assertEqual(test_product.name,
-                         'Gigabyte NVIDIA GeForce RTX 3090 TURBO 24GB GDDR6X Ray-Tracing Graphics Card, 10496 Core, 1410MHz GPU, 1695MHz Boost')
+                         'ZOTAC NVIDIA GeForce RTX 3090 AMP Extreme Holo 24GB GDDR6X Ray-Tracing Graphics Card, 10496 Core, 1815MHz Boost')
         self.assertEqual(test_product.in_stock, True)
-        self.assertEqual(test_product.price, '£1,998.98')
+        self.assertEqual(test_product.price, 'Â£2,299.99')
 
 
 if __name__ == "__main__":
