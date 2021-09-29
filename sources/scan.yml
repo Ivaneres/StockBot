@@ -9,5 +9,7 @@ selectors:
     status_path: "in stock"
     stock_message: "In stock"
     price_path: "price"
+    image_url_path: ""
+    url_path: "description"
     remove_classes:
       - "relatedProducts"
