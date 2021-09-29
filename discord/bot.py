@@ -48,7 +48,7 @@ class StockBot(commands.Bot):
 
     @commands.command(name="list", help="Displays GPU stock upon request")
     async def list_stock(self, message):
-        print(await self.check_stock())
+        self.broadcast_stock()
 
 
 def setup_bot():
