@@ -31,15 +31,24 @@ class StockBot(commands.Bot):
                 continue
             self.load_extension(f"{path.replace('./', '')}.{file.replace('.py', '')}")
 
-    @tasks.loop(seconds=30)
     async def check_stock(self):
-        notifs_channel = await self.fetch_channel(self.config["notifs_channel"])
+        stock = []
         for monitor in self.monitors:
-            stock = monitor.run()
-            for item in stock:
-                if not item.in_stock:
-                    continue
-                await notifs_channel.send(f"Item {item.name} is currently in stock.")
+            stock.append(monitor.run())
+        return [x for listing in stock for x in listing]
+
+    @tasks.loop(seconds=30)
+    def broadcast_stock(self):
+        notifs_channel = await self.fetch_channel(self.config["notifs_channel"])
+        stock = await self.check_stock()
+        for item in stock:
+            if not item.in_stock:
+                continue
+            await notifs_channel.send(f"Item {item.name} is currently in stock.")
+
+    @commands.command(name="list", help="Displays GPU stock upon request")
+    async def list_stock(self, message):
+        print(await self.check_stock())
 
 
 def setup_bot():
