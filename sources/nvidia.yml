@@ -13,6 +13,12 @@ selectors:
     stock_message: "in_stock"
     price_path:
       - "productPrice"
+    url_path:
+      - "retailers"
+      - 0
+      - "purchaseLink"
+    image_url_path:
+      - "imageURL"
   - products_path:
       - searchedProducts
       - featuredProduct
@@ -23,3 +29,9 @@ selectors:
     stock_message: "in_stock"
     price_path:
       - "productPrice"
+    url_path:
+      - "retailers"
+      - 0
+      - "purchaseLink"
+    image_url_path:
+      - "imageURL"

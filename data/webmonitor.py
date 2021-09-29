@@ -38,7 +38,7 @@ class WebMonitor(StockMonitor):
 
     def run(self) -> List[Product]:
         data = self.get_data()
-        return [x for selector in self.selectors for x in selector.parse_data(data)]
+        return [x for selector in self.selectors for x in selector.parse_data(data, self.request_url)]
 
     @classmethod
     def from_yaml(cls, path: str):
@@ -46,21 +46,22 @@ class WebMonitor(StockMonitor):
             data = yaml.safe_load(fp.read())
         selectors = []
         for selector_data in data["selectors"]:
+            default_args = {
+                "prod_path": selector_data["products_path"],
+                "name_path": selector_data["name_path"],
+                "url_path": selector_data["url_path"],
+                "image_url_path": selector_data["image_url_path"],
+                "stock_status_path": selector_data["status_path"],
+                "stock_status_message": selector_data["stock_message"],
+                "price_path": selector_data.get("price_path")
+            }
             if data["type"] == "api":
                 selector = JSONSelector(
-                    prod_path=selector_data["products_path"],
-                    name_path=selector_data["name_path"],
-                    stock_status_path=selector_data["status_path"],
-                    stock_status_message=selector_data["stock_message"],
-                    price_path=selector_data.get("price_path")
+                    **default_args
                 )
             else:
                 selector = HTMLSelector(
-                    prod_path=selector_data["products_path"],
-                    name_path=selector_data["name_path"],
-                    stock_status_path=selector_data["status_path"],
-                    stock_status_message=selector_data["stock_message"],
-                    price_path=selector_data.get("price_path"),
+                    **default_args,
                     remove_classes=selector_data.get("remove_classes")
                 )
             selectors.append(selector)

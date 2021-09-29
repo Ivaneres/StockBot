@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 
 class Product:
@@ -10,10 +10,12 @@ class Product:
     source: string indicating source of product e.g. "NVIDIA", "Scan"
     """
 
-    def __init__(self, name: str, in_stock: bool, price: int):
+    def __init__(self, name: str, in_stock: bool, price: int, url: str, image_url: Optional[str] = None):
         self.name = name
         self.in_stock = in_stock
         self.price = price
+        self.url = url
+        self.image_url = image_url
 
 
 class StockMonitor(ABC):
