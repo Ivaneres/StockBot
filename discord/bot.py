@@ -18,7 +18,7 @@ class StockBot(commands.Bot):
         self.load_cogs("./discord/cogs")
         logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
         logging.info("Started bot")
-        self.check_stock.start()
+        self.broadcast_stock.start()
 
     @staticmethod
     def load_config(path):
@@ -29,7 +29,8 @@ class StockBot(commands.Bot):
         for file in os.listdir(path):
             if not file.endswith(".py") or file.startswith("__init__"):
                 continue
-            self.load_extension(f"{path.replace('./', '')}.{file.replace('.py', '')}")
+            #self.load_extension(f"{path.replace('./', '')}.{file.replace('.py', '')}")
+            self.load_extension(".".join([os.path.splitext(x)[0] for x in os.path.normpath(path + "/" + file).split(os.sep)]))
 
     async def check_stock(self):
         stock = []
@@ -38,7 +39,7 @@ class StockBot(commands.Bot):
         return [x for listing in stock for x in listing]
 
     @tasks.loop(seconds=30)
-    def broadcast_stock(self):
+    async def broadcast_stock(self):
         notifs_channel = await self.fetch_channel(self.config["notifs_channel"])
         stock = await self.check_stock()
         for item in stock:
@@ -46,9 +47,10 @@ class StockBot(commands.Bot):
                 continue
             await notifs_channel.send(f"Item {item.name} is currently in stock.")
 
-    @commands.command(name="list", help="Displays GPU stock upon request")
-    async def list_stock(self, message):
-        self.broadcast_stock()
+    # @commands.command(name="list", help="Displays GPU stock upon request")
+    # @self.command(name = "list", help = "Displays GPU stock upon request")
+    # async def list_stock(self, message):
+    #     self.broadcast_stock()
 
 
 def setup_bot():
