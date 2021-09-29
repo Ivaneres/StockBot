@@ -38,8 +38,7 @@ class StockBot(commands.Bot):
             stock.append(monitor.run())
         return [x for listing in stock for x in listing]
 
-    @tasks.loop(seconds=30)
-    async def broadcast_stock(self):
+    async def display_stock(self):
         notifs_channel = await self.fetch_channel(self.config["notifs_channel"])
         msg = await notifs_channel.send("New items in stock!")
         thread = await msg.create_thread(name="New Stock", auto_archive_duration=60)
@@ -54,6 +53,10 @@ class StockBot(commands.Bot):
                 discord_img = discord.File(img, filename=f"image.{img_extension}")
                 embed.set_image(url=f"attachment://image.{img_extension}")
             await thread.send(file=discord_img, embed=embed)
+
+    @tasks.loop(seconds=30)
+    async def broadcast_stock(self):
+        await self.display_stock()
 
 
 def setup_bot():
