@@ -1,8 +1,8 @@
 from typing import List
-
 from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
+from price_parser import Price
 
 from data.monitor import Product, ProductCategory
 
@@ -71,7 +71,7 @@ class HTMLSelector:
                 Product(
                     name=name,
                     in_stock=self.stock_status_message.lower() in status.get_text().strip().lower() if status is not None else False,
-                    price=price.get_text().strip() if price is not None else None,
+                    price=Price.fromstring(price.get_text().strip()) if price is not None else None,
                     url=urljoin(request_url_base, url),
                     image_url=image_url,
                     category=ProductCategory.find_from_list(self.product_categories, name)

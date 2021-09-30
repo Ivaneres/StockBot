@@ -46,9 +46,15 @@ class StockBot(commands.Bot):
         for item in await self.check_stock():
             if not item.in_stock:
                 continue
-            embed = discord.Embed(title="Item is in stock!", description=item.name, url=item.url)
+            embed = discord.Embed(
+                title=f"{'Item' if item.category.name is None else item.category.name} in stock!",
+                description=item.name,
+                url=item.url
+            )
             if item.category is not None:
                 embed.add_field(name="Category", value=item.category.name)
+            if item.price is not None:
+                embed.add_field(name="Price", value=item.price.currency + " " + str(item.price.amount_float))
             discord_img = None
             if item.image_url is not None:
                 img_extension = item.image_url.split(".")[-1]

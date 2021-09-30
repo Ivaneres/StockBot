@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 import yaml
+from price_parser import Price
 
 
 class ProductCategory:
@@ -36,7 +37,7 @@ class Product:
     source: string indicating source of product e.g. "NVIDIA", "Scan"
     """
 
-    def __init__(self, name: str, in_stock: bool, price: int, url: str, image_url: Optional[str] = None,
+    def __init__(self, name: str, in_stock: bool, price: Optional[Price], url: str, image_url: Optional[str] = None,
                  category: ProductCategory = None):
         self.name = name
         self.in_stock = in_stock

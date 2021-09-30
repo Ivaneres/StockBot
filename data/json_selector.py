@@ -1,5 +1,7 @@
 from typing import List
+
 from bs4 import BeautifulSoup
+from price_parser import Price
 
 from data.monitor import Product, ProductCategory
 from utils import lookup
@@ -43,7 +45,7 @@ class JSONSelector:
             Product(
                 name=name,
                 in_stock=lookup(product, self.status_path) == self.stock_status_message,
-                price=lookup(product, self.price_path) if self.price_path is not None else None,
+                price=Price.fromstring(lookup(product, self.price_path)) if self.price_path is not None else None,
                 url=lookup(product, self.url_path),
                 image_url=lookup(product, self.image_url_path) if self.image_url_path is not None else None,
                 category=ProductCategory.find_from_list(self.product_categories, name)
