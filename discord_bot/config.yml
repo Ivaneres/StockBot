@@ -1,4 +1,6 @@
 command_prefix: ","
 notifs_channel: 301100549305270272
+subscription_channel: 892800880716447815s
 role: 835864055783882802
 sources_path: "./sources"
+
