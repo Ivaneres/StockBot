@@ -2,6 +2,8 @@ type: html
 url: "https://www.scan.co.uk/shop/gaming/gpu-nvidia-gaming/3175/3176/3177/3221/3257/3350/3353"
 headers:
   User-Agent: "Mozilla/5.0 (X11; Linux x86_64; rv:92.0) Gecko/20100101 Firefox/92.0"
+products:
+  - "products/nvidia_cards"
 selectors:
   - products_path:
       - "product"
@@ -9,3 +11,7 @@ selectors:
     status_path: "in stock"
     stock_message: "In stock"
     price_path: "price"
+    image_url_path: ""
+    url_path: "description"
+    remove_classes:
+      - "relatedProducts"

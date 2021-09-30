@@ -1,0 +1,2 @@
+match: "rtx 3080 [^t]"
+name: "RTX 3080"
