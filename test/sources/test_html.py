@@ -1,7 +1,7 @@
 import unittest
 from bs4 import BeautifulSoup
 import lxml
-from data.html_parser import HTMLParser
+from data.html_selector import HTMLParser
 
 
 class ScanTest(unittest.TestCase):

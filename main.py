@@ -1,3 +1,7 @@
-from discord_bot.bot import setup_bot
+from discord_bot.bot import StockBot
+import discord
 
-bot = setup_bot()
+intents = discord.Intents.default()
+intents.members = True
+bot = StockBot("discord_bot/config.yml", monitors=[], intents=intents)
+bot.run(bot.config["token"])

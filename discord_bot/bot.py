@@ -30,7 +30,8 @@ class StockBot(commands.Bot):
         for file in os.listdir(path):
             if not file.endswith(".py") or file.startswith("__init__"):
                 continue
-            self.load_extension(".".join([os.path.splitext(x)[0] for x in os.path.normpath(path + "/" + file).split(os.sep)]))
+            self.load_extension(
+                ".".join([os.path.splitext(x)[0] for x in os.path.normpath(path + "/" + file).split(os.sep)]))
 
     async def check_stock(self):
         stock = []
@@ -47,6 +48,8 @@ class StockBot(commands.Bot):
             if not item.in_stock:
                 continue
             embed = discord.Embed(title="Item is in stock!", description=item.name, url=item.url)
+            if item.category is not None:
+                embed.add_field(name="Category", value=item.category.name)
             discord_img = None
             if item.image_url is not None:
                 img_extension = item.image_url.split(".")[-1]
@@ -54,11 +57,3 @@ class StockBot(commands.Bot):
                 discord_img = discord.File(img, filename=f"image.{img_extension}")
                 embed.set_image(url=f"attachment://image.{img_extension}")
             await thread.send(file=discord_img, embed=embed)
-
-
-def setup_bot():
-    intents = discord.Intents.default()
-    intents.members = True
-    bot = StockBot("discord_bot/config.yml", monitors=[], intents=intents)
-    bot.run(bot.config["token"])
-    return bot

@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 
 import data
-from data.api_parser import APIParser
+from data.json_selector import APIParser
 from data.webmonitor import WebMonitor
 
 
@@ -20,14 +20,14 @@ class NvidiaTest(unittest.TestCase):
 
     @patch("data.api_parser.JSONSelector")
     def test_api_parser(self, MockJSONSelector):
-        json_selector_1 = data.api_parser.JSONSelector(
+        json_selector_1 = data.json_selector.JSONSelector(
                     prod_path=["testing"],
                     price_path=["price"],
                     name_path=["name"],
                     stock_status_path=["status"],
                     stock_status_message="status_message"
                 )
-        json_selector_2 = data.api_parser.JSONSelector(
+        json_selector_2 = data.json_selector.JSONSelector(
                     prod_path=["testing2"],
                     name_path=["name2"],
                     stock_status_path=["status2"],
