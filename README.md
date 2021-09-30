@@ -14,11 +14,15 @@ StockBot is a stock monitor tool with Discord integration, used to monitor stock
 
  * [x] Basic Discord integration
  * [x] Parsing of stock data from JSON API responses
- * [ ] Parsing of stock data from HTML webpages
- * [ ] Merging data monitors with Discord bot
- * [ ] More flexible website data definitions - JSON or YML files
- * [ ] Test suite
+ * [x] Parsing of stock data from HTML webpages
+ * [x] Merging data monitors with Discord bot
+ * [x] More flexible website and JSON data definitions - YML files
+ * [x] Test suite
+ * [x] Product category definitions
+ * [ ] Discord thread-based new stock notification messages
+ * [ ] Per-user persistent product subscription system with price filtering
  * [ ] Production ready!
+ * [ ] Advanced data definitions - companion .py files and extension of `StockMonitor` class
  * [ ] More customisation and control via Discord commands
 
 ## Getting Started
@@ -31,6 +35,14 @@ cd StockBot
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+```
+
+This project relies on relatively new Discord API features, so the latest version of [pycord](https://github.com/Pycord-Development/pycord) is required. To install it, run
+
+```
+git submodule init
+git submodule update --remote
+cd pycord ; pip install .
 ```
 
 Add a line containing your Discord bot token (https://discord.com/developers/applications) to `config.yml`:
@@ -50,13 +62,38 @@ The bot uses the `,` prefix by default, which may be modified in `config.yml`. S
 
 ## Development
 
-### Structure
-
-Add to this once we figure out a proper structure.
-
 ### Extension
 
-Extend APIParser or HTMLParser, defining selectors. Expand this!
+New data sources and products may be added easily to this bot. 
+
+#### Sources
+
+Sources are defined in the `sources/` directory, using YAML files. The YAML layout is as follows:
+```yaml
+type: api | html
+url: website or api url
+headers: any necessary request headers
+products: products directories
+selectors: (see selectors docs for details)
+```
+
+#### Products
+
+YAML files. Define a key `match` which is used to regex match by titles, and `name`.
+
+See the implemented sources for examples.
+
+---
+
+### Structure
+
+#### data/
+
+Everything related to scraping data from the web or APIs. Abstract class `StockMonitor` in `monitor.py` defines an interface for monitors - custom implementations of monitors inherit this.
+
+#### discord_bot/
+
+Discord bot files. Settings are in `config.yml`, commands are defined in `cogs`.
 
 ---
 

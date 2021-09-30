@@ -1,0 +1,3 @@
+[submodule "pycord"]
+	path = pycord
+	url = https://github.com/Pycord-Development/pycord
