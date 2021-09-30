@@ -8,39 +8,33 @@ from discord.ext import commands, tasks
 from data.webmonitor import WebMonitor
 from utils import create_image
 
+#loads bot config
+with open("./discord_bot/config.yml") as fp:
+    config = yaml.safe_load(fp)
 
 class StockBot(commands.Bot):
 
     def __init__(self, config_path: str, **kwargs):
-        self.config = self.load_config(config_path)
-        sources_path = os.path.normpath(self.config["sources_path"])
+        sources_path = os.path.normpath(config["sources_path"])
         self.monitors = [WebMonitor.from_yaml(sources_path + "/" + file) for file in os.listdir(sources_path)]
-        super().__init__(command_prefix=self.config["command_prefix"], **kwargs)
+        super().__init__(command_prefix=config["command_prefix"], **kwargs)
         self.load_cogs("./discord_bot/cogs")
         logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
         logging.info("Started bot")
         self.broadcast_stock.start()
 
-    @staticmethod
-    def load_config(path):
-        with open(path) as fp:
-            return yaml.safe_load(fp)
-
     def load_cogs(self, path):
         for file in os.listdir(path):
             if not file.endswith(".py") or file.startswith("__init__"):
                 continue
-            self.load_extension(
-                ".".join([os.path.splitext(x)[0] for x in os.path.normpath(path + "/" + file).split(os.sep)]))
+            self.load_extension(".".join([os.path.splitext(x)[0] for x in os.path.normpath(path + "/" + file).split(os.sep)]))
 
     async def check_stock(self):
-        stock = []
-        for monitor in self.monitors:
-            stock.append(monitor.run())
+        stock = [monitor.run() for monitor in self.monitors]
         return [x for listing in stock for x in listing]
 
     async def display_stock(self):
-        notifs_channel = await self.fetch_channel(self.config["notifs_channel"])
+        notifs_channel = await self.fetch_channel(config["notifs_channel"])
         msg = await notifs_channel.send("New items in stock!")
         thread = await msg.create_thread(name="New Stock", auto_archive_duration=60)
         for item in await self.check_stock():
@@ -72,5 +66,5 @@ def setup_bot():
     intents = discord.Intents.default()
     intents.members = True
     bot = StockBot("discord_bot/config.yml", monitors=[], intents=intents)
-    bot.run(bot.config["token"])
+    bot.run(config["token"])
     return bot

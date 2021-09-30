@@ -1,5 +1,8 @@
 command_prefix: ","
+admin_role: "Admin"
+mod_role: "Royal Guard"
 notifs_channel: 301100549305270272
+subscription_channel: 892800880716447815s
 role: 835864055783882802
 sources_path: "./sources"
 products_path: "./sources/products"
