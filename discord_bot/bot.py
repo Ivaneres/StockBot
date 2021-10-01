@@ -11,37 +11,32 @@ from data.monitor import Product, ProductCategory
 from data.webmonitor import WebMonitor
 from utils import create_image
 
+#loads bot config
+with open("./discord_bot/config.yml") as fp:
+    config = yaml.safe_load(fp)
+
 
 class StockBot(commands.Bot):
 
     def __init__(self, config_path: str, **kwargs):
-        self.config = self.load_config(config_path)
-        sources_path = os.path.normpath(self.config["sources_path"])
+        sources_path = os.path.normpath(config["sources_path"])
         self.monitors = [WebMonitor.from_yaml(sources_path + "/" + file) for file in os.listdir(sources_path)]
         self.stock_cache: List[Product] = []
         self.active_threads: Dict[ProductCategory, Tuple[discord.Thread, int]] = {}
-        super().__init__(command_prefix=self.config["command_prefix"], **kwargs)
+        super().__init__(command_prefix=config["command_prefix"], **kwargs)
         self.load_cogs("./discord_bot/cogs")
         logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(message)s')
         logging.info("Started bot")
         self.broadcast_stock.start()
 
-    @staticmethod
-    def load_config(path):
-        with open(path) as fp:
-            return yaml.safe_load(fp)
-
     def load_cogs(self, path):
         for file in os.listdir(path):
             if not file.endswith(".py") or file.startswith("__init__"):
                 continue
-            self.load_extension(
-                ".".join([os.path.splitext(x)[0] for x in os.path.normpath(path + "/" + file).split(os.sep)]))
+            self.load_extension(".".join([os.path.splitext(x)[0] for x in os.path.normpath(path + "/" + file).split(os.sep)]))
 
     def check_stock(self):
-        stock = []
-        for monitor in self.monitors:
-            stock.append(monitor.run())
+        stock = [monitor.run() for monitor in self.monitors]
         return [x for listing in stock for x in listing if x.in_stock]
 
     @staticmethod
@@ -54,14 +49,14 @@ class StockBot(commands.Bot):
         return diff
 
     async def display_stock(self):
-        notifs_channel = await self.fetch_channel(self.config["notifs_channel"])
+        notifs_channel = await self.fetch_channel(config["notifs_channel"])
         stock = self.check_stock()
         stock_diff = self.get_stock_diff(self.stock_cache, stock)
         self.stock_cache = stock
         stock_diff_categories = set(x.category for x in stock_diff)
         for category in stock_diff_categories:
             thread, time_created = self.active_threads.get(category, (None, None))
-            if thread is None or int(time.time()) - time_created > self.config["max_thread_age"]:
+            if thread is None or int(time.time()) - time_created > config["max_thread_age"]:
                 msg = await notifs_channel.send(f"New {category.name}s in stock!")
                 thread = await msg.create_thread(name=category.name, auto_archive_duration=60)
                 self.active_threads[category] = (thread, int(time.time()))
@@ -90,5 +85,5 @@ def setup_bot():
     intents = discord.Intents.default()
     intents.members = True
     bot = StockBot("discord_bot/config.yml", monitors=[], intents=intents)
-    bot.run(bot.config["token"])
+    bot.run(config["token"])
     return bot
