@@ -41,13 +41,13 @@ class Admin(commands.Cog):
                 })
             else:
                 user_subscription.products[product_category.name] = SubscriptionData(max_price=None)
-            print(self.subscriptions)  # todo: remove testing feature
+            #print(self.subscriptions)  # todo: remove testing feature
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent):
         product_category = self.category_reacts[payload.emoji.name]
         del self.subscriptions[payload.user_id].products[product_category]
-        print(self.subscriptions)  # todo: remove testing feature
+        #print(self.subscriptions)  # todo: remove testing feature
 
 
 def setup(bot):
