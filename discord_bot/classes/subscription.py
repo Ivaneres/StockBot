@@ -1,7 +1,16 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import Dict, Optional
+
+from data.monitor import ProductCategory
+
+
+@dataclass
+class SubscriptionData:
+    max_price: Optional[float]
+
 
 @dataclass
 class Subscription:
-    memberID: str
-    subscribed_categories: List[Dict] # example: [{"category":"RTX3090", "max price": 1500},{...}]
+    products: Dict[ProductCategory, SubscriptionData]
