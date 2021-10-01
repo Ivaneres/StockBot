@@ -4,7 +4,7 @@ import discord as discord
 from discord.ext import commands
 
 from discord_bot.bot import config
-from discord_bot.classes.subscription import Subscription, SubscriptionData
+from discord_bot.subscription import Subscription, SubscriptionData
 
 
 class Admin(commands.Cog):
