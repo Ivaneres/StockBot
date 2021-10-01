@@ -2,6 +2,7 @@ from typing import Dict, Optional
 
 import discord as discord
 from discord.ext import commands
+import jsonpickle
 
 from discord_bot.bot import config
 from discord_bot.classes.subscription import Subscription, SubscriptionData
@@ -16,6 +17,9 @@ class Admin(commands.Cog):
         self.category_reacts = {self.react_list[i]: category for i, category in enumerate(self.categories)}
         self.subscription_message: Optional[discord.Message] = None
         self.subscriptions: Dict[discord.Member.id, Subscription] = {}
+
+    def save_user_data(self):
+        return jsonpickle.encode(self.subscriptions) #todo: save json to file
 
     @commands.command(name="subchannel", help="sets channel where users can subscribe to product notifications")
     @commands.has_any_role(config["admin_role"], config["mod_role"])
@@ -33,17 +37,17 @@ class Admin(commands.Cog):
             product_category = self.category_reacts[payload.emoji.name]
             if user_subscription is None:
                 self.subscriptions[payload.user_id] = Subscription(products={
-                    product_category: SubscriptionData(max_price=None)
+                    product_category.name: SubscriptionData(max_price=None)
                 })
             else:
-                user_subscription.products[product_category] = SubscriptionData(max_price=None)
-            # print(self.subscriptions)  # todo: remove testing feature
+                user_subscription.products[product_category.name] = SubscriptionData(max_price=None)
+            print(self.subscriptions)  # todo: remove testing feature
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent):
         product_category = self.category_reacts[payload.emoji.name]
         del self.subscriptions[payload.user_id].products[product_category]
-        # print(self.subscriptions)  # todo: remove testing feature
+        print(self.subscriptions)  # todo: remove testing feature
 
 
 def setup(bot):
