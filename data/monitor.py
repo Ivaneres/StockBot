@@ -14,6 +14,14 @@ class ProductCategory:
         self.regex = regex
         self.name = name
 
+    def __eq__(self, other: ProductCategory):
+        if isinstance(other, ProductCategory):
+            return self.name == other.name
+        return NotImplemented
+
+    def __hash__(self):
+        return hash((self.name, self.regex))
+
     def match(self, name: str) -> bool:
         return re.search(self.regex, name) is not None
 

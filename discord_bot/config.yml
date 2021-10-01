@@ -3,3 +3,4 @@ notifs_channel: 301100549305270272
 role: 835864055783882802
 sources_path: "./sources"
 products_path: "./sources/products"
+max_thread_age: 3600
