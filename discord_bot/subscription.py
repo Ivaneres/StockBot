@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Dict, Optional
-
-from data.monitor import ProductCategory
+import json
 
 
 @dataclass
@@ -13,4 +12,4 @@ class SubscriptionData:
 
 @dataclass
 class Subscription:
-    products: Dict[ProductCategory, SubscriptionData]
+    products: Dict[str, SubscriptionData]
