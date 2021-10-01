@@ -4,8 +4,6 @@ from dataclasses import dataclass
 from typing import Dict, Optional
 import json
 
-from data.monitor import ProductCategory
-
 
 @dataclass
 class SubscriptionData:
