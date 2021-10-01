@@ -6,4 +6,5 @@ subscription_channel: 892800880716447815s
 role: 835864055783882802
 sources_path: "./sources"
 products_path: "./sources/products"
+save_path: "./discord_bot/data"
 max_thread_age: 3600
